@@ -44,7 +44,9 @@ const SignUpPage = () => {
         }
       }
     });
+    // eslint-disable-next-line no-console
     console.log(data);
+    // eslint-disable-next-line no-console
     console.log(error);
     if (error) {
       setSmh(true);

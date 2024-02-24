@@ -46,6 +46,7 @@ const Footer = () => {
   });
 
   const onSubmitFn = ({ newsletterEmail }: NewsLetterFormValues) => {
+    // eslint-disable-next-line no-console
     console.log("submitted fn");
   };
 

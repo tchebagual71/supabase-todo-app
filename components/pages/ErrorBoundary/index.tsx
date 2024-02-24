@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/state-in-constructor */
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import React, { Component, ReactNode } from "react";
 
 interface Props {
   children?: ReactNode;
@@ -20,13 +20,12 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.log(error);
-  }
+
 
   public render() {
     if (this.state.hasError) {
       return (
+        // eslint-disable-next-line tailwindcss/no-custom-classname
         <div className="c-Error-page">
           <h1>Something went wrong</h1>
           <p>Oops! Something went wrong. Please try again later.</p>

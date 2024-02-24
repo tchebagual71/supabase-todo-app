@@ -1,175 +1,113 @@
-/* eslint-disable prefer-const */
-/* eslint-disable no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable tailwindcss/no-custom-classname */
+/* eslint-disable jsx-a11y/label-has-associated-control */
+// eslint-disable-next-line jsx-a11y/label-has-associated-control
+
+
 import MainLayout from "@/components/layout/MainLayout";
 import * as Yup from "yup";
-import { Form, Formik } from "formik";
+import { Formik, Form, Field, FormikHelpers } from "formik";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import FormField from "@/components/shared/FormField";
 import Button from "@/components/shared/Button";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import TodoItem from "./TodoItem";
-import React from "react";
-import Image from "next/image";
+
+interface TodoItem {
+  id: number; // Adjust according to your actual data model if necessary.
+  content: string;
+  image_url?: string;
+}
+
+interface FormValues {
+  todoData: string;
+}
 
 const Dashboard = () => {
-  const validationSchema = Yup.object().shape({
-    todoData: Yup.string().required("Required field.")
-  });
   const supabaseClient = useSupabaseClient();
   const user = useUser();
-  const [todos, setTodos] = useState<any>([]);
-  const [reloadTodos, setReloadTodos] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [reloadTodos, setReloadTodos] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      const { data, error } = await supabaseClient
-        .from("todos")
-        .select()
-        .order("created_at", { ascending: false });
-      console.log(data);
-      if (error) {
-        console.log(error);
-        return;
-      }
-      setTodos(data as any);
-    })();
-  }, [reloadTodos]);
+  const validationSchema = Yup.object({
+    todoData: Yup.string().required("Required field."),
+  });
 
-  const onSubmitFn = async ({ todoData }, { setSubmitting, resetForm }) => {
-    let image_url = null;
-  
+  const initialValues: FormValues = { todoData: "" };
+
+  const onSubmit = async (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
+    let imageUrl = "";
     if (selectedFile) {
-      const fileExtension = selectedFile.name.split('.').pop();
+      const fileExtension = selectedFile.name.split(".").pop();
       const fileName = `todos/${Math.random().toString(36).substring(2)}.${fileExtension}`;
-  
-      try {
-        const { error: uploadError } = await supabaseClient.storage
-          .from('todos-images')
-          .upload(fileName, selectedFile);
-  
-        if (uploadError) {
-          throw new Error(uploadError.message);
-        }
-  
-        // Directly construct the URL for public access
-        image_url = `https://kagqxukzunpizemvxjro.supabase.co/storage/v1/object/public/todos-images/${fileName}`;
-        console.log('Image URL:', image_url);
-      } catch (error) {
-        toast.error(`Failed to upload image: ${error.message}`);
+      const { error: uploadError, data: uploadData } = await supabaseClient.storage.from("todos-images").upload(fileName, selectedFile);
+
+      if (uploadError) {
+        toast.error(`Upload failed: ${uploadError.message}`);
         return;
       }
+
+      // Assuming uploadData contains a property 'path' that holds the file path
+      imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/todos-images/${uploadData.path}`;
     }
-  
-    try {
-      const { error } = await supabaseClient
-        .from('todos')
-        .insert({
-          content: todoData,
-          user_uuid: user?.id,
-          image_url: image_url,
-        });
-  
-      if (error) {
-        throw new Error(error.message);
-      }
-  
-      toast.success('Todo added successfully');
-      setReloadTodos((state) => !state);
+
+    const { error } = await supabaseClient.from("todos").insert({
+      content: values.todoData,
+      user_uuid: user?.id,
+      image_url: imageUrl,
+    });
+
+    if (error) {
+      toast.error(`Error: ${error.message}`);
+    } else {
+      toast.success("Todo added successfully");
+      setReloadTodos(!reloadTodos);
       resetForm();
-    } catch (error) {
-      toast.error(`There was an error: ${error.message}`);
-    } finally {
-      setSelectedFile(null);
     }
   };
-  
-  
-  
-  
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const { data, error } = await supabaseClient.from("todos").select("*").order("created_at", { ascending: false });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        // Cast the fetched data to TodoItem[] to satisfy TypeScript's type checking
+        setTodos(data as TodoItem[]);
+      }
+    };
+    fetchTodos();
+  }, [reloadTodos, supabaseClient]);
 
   return (
     <MainLayout className="bg-gray-50">
       <div className="flex flex-col items-center justify-center px-16">
-        <div className="mt-20 text-center">
-
-          <h1 className="text-display-lg font-bold">create rando😊</h1>
-          <p className="text-xl text-gray-600">just select an image and add a comment.</p>
-        </div>
+        <h1 className="mt-20 text-display-lg font-bold">Create Rando😊</h1>
+        <p className="text-xl text-gray-600">Just select an image and add a comment.</p>
         <div className="flex w-full max-w-screen-sm flex-col">
-        <Formik
-        initialValues={{ todoData: "" }}
-        validationSchema={validationSchema}
-        onSubmit={(values, formikHelpers) => onSubmitFn(values, formikHelpers)}
-      >
-        {({ isValid, dirty }) => (
-          <Form className="mt-8 flex w-full items-center"> {/* Ensure alignment */}
-            <FormField
-              fieldName="todoData"
-              placeholder="An interesting title or comment..."
-              disabled={false}
-              className="w-full"
-            />
-
-            {/* File input hidden but accessible via label */}
-            <input
-              id="file"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={{ display: 'none' }} // Hide the actual input
-            />
-            {/* Label styled as a button */}
-            <label
-              htmlFor="file"
-              className="ml-4 inline-block bg-black text-white font-bold py-2 px-4 rounded hover:bg-purple-700 cursor-pointer"
-            >
-              Choose Image
-            </label>
-
-            <Button
-              disabled={!dirty || !isValid}
-              type="submit"
-              customClassName="ml-4"
-            >
-              Submit
-            </Button>
-          </Form>
-        )}
-      </Formik>
+          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+            {({ isSubmitting }) => (
+              <Form className="mt-8 flex flex-col items-center gap-4">
+                <Field as="textarea" name="todoData" className="textarea form-field" placeholder="An interesting title or comment..." />
+                <input id="file" name="file" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                <label htmlFor="file" className="btn btn-primary cursor-pointer">Choose Image</label>
+                <Button type="submit" disabled={isSubmitting}>Submit</Button>
+              </Form>
+            )}
+          </Formik>
           <div className="mt-4">
-          {todos.length ? (
-  todos.map((todo: any) => (
-    <React.Fragment key={todo.uuid}> 
-    <TodoItem
-      uuid={todo.uuid}
-      done={todo.completed}
-      timestamp={todo.created_at}
-      setReloadTodos={setReloadTodos}
-      className="mt-4"
-    >
-      {todo.content}
-    </TodoItem>
-    {todo.image_url && (
-      <img
-        src={todo.image_url}
-        alt="Todo"
-        className="mt-2 w-full max-w-xs"
-        style={{ maxWidth: '500px', height: 'auto' }} // Optional styling
-      />
-    )}
-  </React.Fragment> 
-  ))
-) : (
-  <p>No Randos😔</p>
-)}
+            {todos.map((todo) => (
+              <div key={todo.id} className="todo-item flex flex-col">
+                <p>{todo.content}</p>
+                {todo.image_url && <img src={todo.image_url} alt="Todo" className="mt-2 w-full max-w-xs" />}
+              </div>
+            ))}
           </div>
         </div>
       </div>

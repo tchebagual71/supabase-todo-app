@@ -25,7 +25,6 @@ const TodoItem = ({
       .delete()
       .eq("uuid", uuid);
     if (error) {
-      console.log(error);
       toast.error("There was an error");
     } else {
       setReloadTodos((state: boolean) => !state);
@@ -37,7 +36,6 @@ const TodoItem = ({
       .update({ completed })
       .eq("uuid", uuid);
     if (error) {
-      console.log(error);
       toast.error("There was an error");
       return;
     }

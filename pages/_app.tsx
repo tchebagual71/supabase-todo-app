@@ -13,6 +13,10 @@ import AuthProvider from "@/context/AuthContext";
 import AuthGuard from "@/utility/auth/AuthGuard";
 import { useRouter } from "next/router";
 import { isProtectedRouteCheck } from "@/utility/auth/AuthUtils";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import "tailwindcss/tailwind.css";
+
+
 
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -36,7 +40,7 @@ export default function App({
     router.events.on("routeChangeStart", () => NProgress.start());
     router.events.on("routeChangeComplete", () => NProgress.done());
     router.events.on("routeChangeError", () => NProgress.done());
-  }, []);
+  }, [router.events]);
   const isProtectedRoute = isProtectedRouteCheck(router.pathname);
 
   return (
