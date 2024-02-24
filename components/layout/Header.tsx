@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import Logo from "@/public/assets/svg/logo.svg";
+import Logo from "@/public/assets/svg/randobanner.png";
 import Link from "next/link";
 import Button from "@/components/shared/Button";
 import { BTN_ENUM } from "@/config/constants";
@@ -35,17 +35,17 @@ const Header = () => {
                 className="mr-4 font-semibold text-gray-600 hover:underline"
                 href="/dashboard"
               >
-                Dashboard
+                Create
               </Link>
             )}
-            <Link
+            {/* <Link
               className={`${
                 auth ? "ml-4" : ""
               } font-semibold text-gray-600  hover:underline`}
               href="/pricing"
             >
               Pricing
-            </Link>
+            </Link> */}
           </ul>
         </div>
         <div className="flex items-center">

@@ -2,7 +2,7 @@
 import React from "react";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
-import Logo from "@/public/assets/svg/logo.svg";
+import Logo from "@/public/assets/svg/randobanner.png";
 import FlagIcons from "@/public/assets/svg/flag-icons.svg";
 import Image from "next/image";
 import {
@@ -53,7 +53,7 @@ const Footer = () => {
     <footer>
       <div className="flex flex-col">
         {/* Newsletter section */}
-        <section className="flex justify-center bg-gray-50 px-16 py-12">
+        {/* <section className="flex justify-center bg-gray-50 px-16 py-12">
           <div className="flex w-full max-w-screen-xl justify-between">
             <div className="mr-2 flex w-full flex-col">
               <h2 className="text-xl font-semibold text-gray-900">
@@ -92,7 +92,7 @@ const Footer = () => {
               </Formik>
             </div>
           </div>
-        </section>
+        </section> */}
         {/* Main footer section */}
         <section className="flex justify-center px-16">
           <div className="flex w-full max-w-screen-xl flex-col">
@@ -103,9 +103,9 @@ const Footer = () => {
                   <Image src={Logo} width={146} height={48} alt="Logo" />
                 </Link>
                 <p className="mt-2 text-gray-600">
-                  Plan, organise and get your work done.
+                  Everyone loves Rando.
                 </p>
-                <span className="mt-4 flex items-center">
+                {/* <span className="mt-4 flex items-center">
                   <Image
                     className="singapore-flag mr-1 object-none"
                     src={FlagIcons}
@@ -116,20 +116,20 @@ const Footer = () => {
                   <p className="ml-1 text-sm font-medium text-gray-500">
                     Singapore
                   </p>
-                </span>
+                </span> */}
               </div>
-              <div className="ml-32 mr-16 flex flex-auto flex-row justify-between">
+              {/* <div className="ml-32 mr-16 flex flex-auto flex-row justify-between">
                 <FooterNavLinks variation={FOOTER_NAV_HEADER_ENUM.PRODUCT} />
                 <FooterNavLinks variation={FOOTER_NAV_HEADER_ENUM.COMPANY} />
                 <FooterNavLinks variation={FOOTER_NAV_HEADER_ENUM.RESOURCES} />
                 <FooterNavLinks variation={FOOTER_NAV_HEADER_ENUM.LEGAL} />
-              </div>
+              </div> */}
             </div>
             <hr className="flex" />
             {/* Bottom */}
             <div className="flex justify-between pb-8 pt-4">
               <p className="text-gray-500">
-                Copyright &copy; 2023 Layers Pte Ltd. All rights reserved.
+                Copyright &copy; 2024 Rando Pte Ltd. All rights reserved.
               </p>
               {/* Socials */}
               <div></div>
