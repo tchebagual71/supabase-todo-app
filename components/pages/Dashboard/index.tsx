@@ -28,12 +28,16 @@ const Dashboard = () => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [reloadTodos, setReloadTodos] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file)); // Create a URL for the selected file
     }
   };
+
 
   const validationSchema = Yup.object({
     todoData: Yup.string().required("Required field."),
@@ -41,7 +45,7 @@ const Dashboard = () => {
 
   const initialValues: FormValues = { todoData: "" };
 
-  const onSubmit = async (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
+  const onSubmit = async (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {    
     let imageUrl = "";
     if (selectedFile) {
       const fileExtension = selectedFile.name.split(".").pop();
@@ -55,6 +59,7 @@ const Dashboard = () => {
 
       // Assuming uploadData contains a property 'path' that holds the file path
       imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/todos-images/${uploadData.path}`;
+      setPreviewUrl(null);
     }
 
     const { error } = await supabaseClient.from("todos").insert({
@@ -96,7 +101,8 @@ const Dashboard = () => {
               <Form className="mt-8 flex flex-col items-center gap-4">
                 <Field as="textarea" name="todoData" className="textarea form-field" placeholder="An interesting title or comment..." />
                 <input id="file" name="file" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                <label htmlFor="file" className="btn btn-primary cursor-pointer">Choose Image</label>
+                {previewUrl && <img src={previewUrl} alt="Preview" className="mt-2 w-full max-w-xs" />} {/* Image preview */}
+                <Button><label htmlFor="file" className="btn btn-primary cursor-pointer">Choose Image</label></Button>
                 <Button type="submit" disabled={isSubmitting}>Submit</Button>
               </Form>
             )}

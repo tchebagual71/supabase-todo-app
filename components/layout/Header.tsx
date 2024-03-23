@@ -38,13 +38,45 @@ const Header = () => {
                 Create
               </Link>
             )}
+                        {auth?.userInfo && (
+              <Link
+                className="mr-4 font-semibold text-gray-600 hover:underline"
+                href="/rampbuildtest"
+              >
+                rampbuildtest
+              </Link>
+            )}
+                        {auth?.userInfo && (
+              <Link
+                className="mr-4 font-semibold text-gray-600 hover:underline"
+                href="/rampbuild"
+              >
+                rampbuild
+              </Link>
+            )}
+            <Link
+              className={`${
+                auth ? "ml-4" : ""
+              } font-semibold text-gray-600  hover:underline`}
+              href="/about"
+            >
+              About
+            </Link>
             {/* <Link
               className={`${
                 auth ? "ml-4" : ""
               } font-semibold text-gray-600  hover:underline`}
-              href="/pricing"
+              href="/rampbuild"
             >
-              Pricing
+              RampBuild
+            </Link>
+            <Link
+              className={`${
+                auth ? "ml-4" : ""
+              } font-semibold text-gray-600  hover:underline`}
+              href="/rampbuildtest"
+            >
+              RampBuildTest
             </Link> */}
           </ul>
         </div>
