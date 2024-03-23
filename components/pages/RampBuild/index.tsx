@@ -112,7 +112,7 @@ const RampBuild = () => {
   return (
     <MainLayout className="bg-gray-50">
       <div className="flex flex-col items-center justify-center p-5 lg:p-16">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl mt-5 text-center font-bold text-gray-800 lg:mt-20">Build Your Ramp</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-800 md:text-4xl lg:text-5xl mt-5 lg:mt-20">Build Your Ramp</h1>
         <p className="mt-3 text-lg text-gray-600 text-center">Fill in the details for your ramp below.</p>
         <div className="mt-8 w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
           <Formik
